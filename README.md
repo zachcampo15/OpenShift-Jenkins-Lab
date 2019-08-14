@@ -83,6 +83,7 @@ BuildConfigs of type `JenkinsPipeline` are interpreted by OpenShift as Jenkins P
 The file `pipeline.yaml` is an OpenShift template that contains the `birthday-paradox-pipeline` BuildConfig. It uses a `git` source, which points to a git repository containing a `Jenkinsfile`.
 
 Using the `oc` tool, process the `pipeline.yaml` OpenShift template and create the pipeline BuildConfig in the Dev project. Be sure to provide the following parameters to the template:
+
 | Parameter | Value |
 | --------- | ----- |
 | APPLICATION_NAME | birthday-paradox |
