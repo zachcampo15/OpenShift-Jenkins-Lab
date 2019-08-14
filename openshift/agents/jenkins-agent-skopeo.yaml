@@ -1,0 +1,15 @@
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  labels:
+    app: jenkins-agent-skopeo
+    role: jenkins-slave
+  name: jenkins-agent-skopeo
+spec:
+  tags:
+  - from:
+      kind: DockerImage
+      name: quay.io/adewey/jenkins-agent-skopeo:latest
+    name: latest
+    referencePolicy:
+      type: Source

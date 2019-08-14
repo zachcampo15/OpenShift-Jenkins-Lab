@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Template
+labels:
+  template: birthday-paradox-deploy
+metadata:
+  name: birthday-paradox-deploy
+objects:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: ${APPLICATION_NAME}
+    labels:
+      app: ${APPLICATION_NAME}
+  spec:
+    replicas: 0
+    selector:
+      matchLabels:
+        app: ${APPLICATION_NAME}
+    template:
+      metadata:
+        labels:
+          app: ${APPLICATION_NAME}
+      spec:
+        containers:
+        - name: ${APPLICATION_NAME}
+          image: ${REGISTRY_URL}:5000/${APPLICATION_PROJECT}/${APPLICATION_NAME}:${IMAGE_TAG}
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          imagePullPolicy: Always
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    port:
+      targetPort: http
+    to:
+      kind: Service
+      name: ${APPLICATION_NAME}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      app: ${APPLICATION_NAME}
+    name: ${APPLICATION_NAME}
+  spec:
+    ports:
+    - protocol: TCP
+      port: 8080
+      name: http
+      targetPort: http
+    selector:
+      app: ${APPLICATION_NAME}
+    type: ClusterIP
+parameters:
+- name: REGISTRY_URL
+  value: image-registry.openshift-image-registry.svc
+- name: APPLICATION_NAME
+  required: true
+- name: IMAGE_TAG
+  required: true
+- name: APPLICATION_PROJECT
+  required: true

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<title>Birthday Paradox</title>
+</head>
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-lg-4"></div>
+			<div class="col-lg-4">
+				<h1 style="text-align: center; padding-bottom: 5px">Birthday Paradox</h1>
+				<form class="form-horizontal" action="#" th:action="@{/}" th:object="${index}" method="post">
+					<div class="form-group">
+						<label class="control-label col-lg-4">Number of Iterations:</label>
+						<div class="col-lg-8">
+							<input type="text" class="numericInput" th:field="*{iterations}"/>
+							<p th:if="${#fields.hasErrors('iterations')}" th:errors="*{iterations}" class="text-danger"></p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="control-label col-lg-4">Number of People:</label>
+						<div class="col-lg-8">
+							<input type="text" class="numericInput" th:field="*{people}"/>
+							<p th:if="${#fields.hasErrors('people')}" th:errors="*{people}" class="text-danger"></p>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-lg-offset-4 col-lg-8">
+							<button type="submit" class="btn btn-default">Submit</button>
+						</div>
+					</div>
+				</form>
+				<div th:if="${index.result >= 0}">
+					<p th:object="${index}">
+						Running the simulation <span th:text="${index.iterations}"></span> times, there is a <b><span th:text="${index.result}"></span>%</b> chance that at least 2 people out of
+						 <span th:text="${index.people}"></span> share the same birthday.
+					</p>
+				</div>
+			</div>
+			<div class="col-lg-4"></div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// Make sure only numbers are provided as input
+			$(".numericInput").keyup(function() {
+				this.value = this.value.replace(/[^0-9\.]/g,'');
+			});
+		});
+	</script>
+</body>
+</html>
