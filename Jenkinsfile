@@ -1,5 +1,5 @@
 def appName = "birthday-paradox"
-def sourceRef = "develop"
+def sourceRef = "master"
 def replicas = "1"
 def devProject = // TODO: Your dev project name goes here
 def testProject = // TODO: Your test project name goes here

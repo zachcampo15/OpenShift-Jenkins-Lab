@@ -14,6 +14,8 @@ git clone https://github.com/$GITHUB_USERNAME/OpenShift-Jenkins-Lab.git
 You should also navigate to your forked repository on your browser.
 
 ### Request Access to OpenTLC Cluster
+Most people who participate in this lab are likely to be Red Hat consultants or partners. For this reason, the below provisioning instructions and the rest of this lab assume you will use the OpenTLC shared OpenShift 4 environment. If you already have access to a cluster, you can skip this section. 
+
 Go to https://labs.opentlc.com. Navigate to Services->Catalogs->OpenTLC OpenShift 4 Labs. Click on the catalog item called OPENTLC OpenShift 4 Shared Access and click "order". Check the checkbox that says you understand the entry's runtime and expiration dates, and click "submit".
 
 In a few minutes, you'll receive an email from Red Hat OPENTLC. The first email will notify you that the provisioning has started. Soon, you'll receive a second email that says provisioning has completed. When you have received this email, you can continue to the next section.
@@ -36,11 +38,11 @@ In this section, you will create and configure three OpenShift projects. The pro
 
 ### 1) Create OpenShift projects
 Create three projects with the following names in OpenShift:
-1. \<firstinitial>\<lastname>-dev
-2. \<firstinitial>\<lastname>-test
-3. \<firstinitial>\<lastname>-prod
+1. $GITHUB_USERNAME-dev
+2. $GITHUB_USERNAME-test
+3. $GITHUB_USERNAME-prod
 
-For example, my first initial is "a" and my last name is "dewey", so my dev project would be called `adewey-dev`.
+For example, my GitHub username is `deweya`, so my dev project would be called `deweya-dev`.
 
 ### 2) Create Jenkins Server in Dev Project
 The Jenkins server in your Dev project will serve as the CI/CD orchestrator. Using the `oc` command, create a Jenkins server in your Dev project.
@@ -70,9 +72,9 @@ Hints:
 - You'll use the same command as above, but with the `registry-editor` role instead
 
 ### 4) Create `git-auth` Secret
-You will need to create an OpenShift secret that contains your GitLab credentials. These credentials will be used by the BuildConfig in step 5 to authenticate with your forked repository.
+You will need to create an OpenShift secret that contains your GitHub username and password. These credentials will be used by the BuildConfig in the next step to authenticate with your forked repository.
 
-Using the `oc` tool, create a `kubernetes.io/basic-auth` OpenShift secret that contains your GitLab username and password.
+Using the `oc` tool, create a `kubernetes.io/basic-auth` OpenShift secret that contains your GitHub username and password.
 
 Hints:
 - Where can you go to find information on how to create this secret?
@@ -87,7 +89,7 @@ Using the `oc` tool, process the `pipeline.yaml` OpenShift template and create t
 | Parameter | Value |
 | --------- | ----- |
 | APPLICATION_NAME | birthday-paradox |
-| REPOSITORY_URI | \<The URL pointing to your forked repository> |
+| REPOSITORY_URI | \<The URL pointing to your forked repository (for this lab use `https`, not ssh)> |
 | SOURCE_REF | master |
 | SOURCE_SECRET | git-auth |
 
@@ -124,7 +126,44 @@ When you believe you have fulfilled each TODO, or just want to simply test your 
 oc start-build birthday-paradox-pipeline
 ```
 
-## Create Git Webhook
-Gitlab blocks access to port 6443! (probably)
+Once you have a working end-to-end pipeline, you can continue to the next step.
 
-This could be done in github instead?
+## Create Git Webhook
+In the previous step, you were triggering your Jenkins pipeline manually using `oc start-build`. Let's take the CI/CD automation a step further and create a git webhook that will automatically trigger the pipeline when a new commit is pushed to your repo.
+
+### 1) Create GitHub Trigger on `birthday-paradox-pipeline` BuildConfig
+Find the `TOOD` in the `pipeline.yaml` file. Using the OpenShift 4.1 documentation as a reference, create a GitHub trigger on the `birthday-paradox-pipeline` BuildConfig. For the `secretReference` name, use the name `webhook-secret`. In the next step, you'll create a secret called `webhook-secret` that contains the webhook secret string.
+
+When you have modified `pipeline.yaml` to contain a GitHub trigger, process and apply the changes to update the BuildConfig.
+
+### 2) Create the `webhook-secret` secret
+Create a generic OpenShift secret called `webhook-secret`. This secret contains the webhook secret string that will be used to configure the webhook in GitHub.
+
+The key for your secret string will be called `WebHookSecretKey`. You can provide a simple value for the sake of this lab, for example, `openshift123`. In a production environment, you may want to provide a mechanism that will automatically generate a difficult webhook secret.
+
+You can use the `oc` CLI to create this secret, similar to how you created the authentication secret during the `Configure OpenShift Environments` section of the lab.
+
+### 3) Configure the webhook in GitHub
+Now that OpenShift is configured to accept the webhook, you need to configure your GitHub repo to send it.
+
+On your GitHub repo, go to Settings->WebHooks->Add webhook. Use the table below to populate the required fields. Fields that are not listed can remain at their default values:
+
+| Field | Value |
+| ----- | ----- |
+| Payload URL | Copy-paste the URL from `oc describe is birthday-paradox-pipeline` output. Replace the `<secret>` string with the value of the `WebHookSecretKey` you defined in the `webhook-secret` above. |
+| Content type | application/json |
+| SSL Verification | Disable (although this is not recommended, GitHub will not be able to recognize the OpenTLC SSL certificate if you are using an OpenTLC cluster for this lab) |
+
+### 4) Test the Webhook
+Everything at this point should be configured to allow a developer to push a commit to the repo and automatically trigger a Jenkins pipeline build. Let's test the webhook to make sure this is the case.
+
+Amend and force-push a commit to trigger the build:
+```bash
+git commit --amend --no-edit
+git push origin master --force
+```
+
+You should see a build trigger in Jenkins after a brief delay.
+
+## Thanks!
+If you've made it this far, you have finished the lab! You should now be familiar with the basics around CI/CD on OpenShift with Jenkins. Please feel free to leave an issue if you have an idea or fix to improve the lab. Your feedback is always welcome!
