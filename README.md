@@ -1,5 +1,5 @@
-# Lab: Birthday-Paradox
-Welcome to the ACE OpenShift lab! Today, you'll build a CI/CD pipeline on OpenShift to deploy a simple Spring-Boot application called `birthday-paradox` (https://en.wikipedia.org/wiki/Birthday_problem).
+# Lab: CI/CD on OpenShift with Jenkins
+Welcome! Today, you'll build a CI/CD pipeline on OpenShift to deploy a simple Spring-Boot application called `birthday-paradox` (https://en.wikipedia.org/wiki/Birthday_problem).
 
 ## Preparation
 ### Fork Repository
@@ -7,8 +7,8 @@ This lab will require you to reference your own fork using a `git source` BuildC
 
 Go ahead and clone your fork once you have forked this repository:
 ```bash
-export GITLAB_USERNAME=<username>
-git clone ssh://git@gitlab.consulting.redhat.com:2222/$GITLAB_USERNAME/ACE-OpenShift-Lab.git
+export GITHUB_USERNAME=<username>
+git clone https://github.com/$GITHUB_USERNAME/OpenShift-Jenkins-Lab.git
 ```
 
 You should also navigate to your forked repository on your browser.
@@ -109,18 +109,20 @@ oc get route jenkins
 Copy and paste the Jenkins URL in your browser. Your login credentials for Jenkins are the same as your OpenTLC credentials. Once inside Jenkins, select the folder corresponding with your Dev project and select the pipeline inside that folder. You should see a fairly empty screen since you haven't run any builds yet. This screen will begin to show build statuses as you trigger builds in the next section.
 
 ## Create Jenkins Pipeline
-Locate the `Jenkinsfile` in this repo. A Jenkinsfile contains the pipeline code that will execute your CI/CD pipeline. A Jenkinsfile is a Groovy-based DSL (Domain-Specific Language) that is understood by Jenkins and operates almost identically to vanilla Groovy, which is based on Java.
+Locate the `Jenkinsfile` in this repo. A Jenkinsfile contains the pipeline code that will execute your CI/CD pipeline. A Jenkinsfile is a Groovy-based [DSL](https://en.wikipedia.org/wiki/Domain-specific_language) that is understood by Jenkins and operates almost identically to vanilla Groovy, which is based on Java.
 
-The `Jenkinsfile` contains unfinished skeleton code. Your task is to complete each section marked as `TODO`. When you believe you have fulfilled each TODO, or just want to simply test your pipeline thus far, trigger the build using `oc`:
-```bash
-oc start-build birthday-paradox-pipeline
-```
+The `Jenkinsfile` contains unfinished skeleton code. Your task is to complete each section marked as `TODO`.
 
 You will have completed this section of the lab when you have completed each TODO and have an end-to-end working pipeline that can:
 1. Build the `birthday-paradox` project
 2. Execute unit tests
 3. Create an immutable container image
 4. Deploy the application Dev, Test, and Prod
+
+When you believe you have fulfilled each TODO, or just want to simply test your pipeline thus far, trigger the build using `oc`:
+```bash
+oc start-build birthday-paradox-pipeline
+```
 
 ## Create Git Webhook
 Gitlab blocks access to port 6443! (probably)

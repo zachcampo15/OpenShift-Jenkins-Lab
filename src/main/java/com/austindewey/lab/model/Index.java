@@ -1,4 +1,4 @@
-package com.redhat.ace.model;
+package com.austindewey.lab.model;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
