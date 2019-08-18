@@ -36,6 +36,8 @@ oc login https://api.shared.na.openshift.opentlc.com:6443
 ## Configure OpenShift Environments
 In this section, you will create and configure three OpenShift projects. The projects will serve as `dev`, `test`, and `prod` environments for the CI/CD pipeline.
 
+If you get stuck, feel free to reference the `answers/configure-openshift.sh` script to complete this section.
+
 ### 1) Create OpenShift projects
 Create three projects with the following names in OpenShift:
 1. $GITHUB_USERNAME-dev
@@ -43,6 +45,8 @@ Create three projects with the following names in OpenShift:
 3. $GITHUB_USERNAME-prod
 
 For example, my GitHub username is `deweya`, so my dev project would be called `deweya-dev`.
+
+Be sure to reset your working `oc` project to your dev project once you complete this step.
 
 ### 2) Create Jenkins Server in Dev Project
 The Jenkins server in your Dev project will serve as the CI/CD orchestrator. Using the `oc` command, create a Jenkins server in your Dev project.
@@ -128,8 +132,12 @@ oc start-build birthday-paradox-pipeline
 
 Once you have a working end-to-end pipeline, you can continue to the next step.
 
+An answer Jenkinsfile is also provided at `answers/Jenkinsfile` in case you get stuck.
+
 ## Create Git Webhook
 In the previous step, you were triggering your Jenkins pipeline manually using `oc start-build`. Let's take the CI/CD automation a step further and create a git webhook that will automatically trigger the pipeline when a new commit is pushed to your repo.
+
+The answers for steps 1 and 2 are available at `answers/pipeline-with-trigger.yaml` and `answers/webhook.sh`.
 
 ### 1) Create GitHub Trigger on `birthday-paradox-pipeline` BuildConfig
 Find the `TOOD` in the `pipeline.yaml` file. Using the OpenShift 4.1 documentation as a reference, create a GitHub trigger on the `birthday-paradox-pipeline` BuildConfig. For the `secretReference` name, use the name `webhook-secret`. In the next step, you'll create a secret called `webhook-secret` that contains the webhook secret string.

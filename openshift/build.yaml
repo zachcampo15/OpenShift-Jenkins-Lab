@@ -36,7 +36,5 @@ parameters:
   required: true
 - name: IMAGE_TAG
   required: true
-- name: SOURCE_REF
-  required: true
 - name: APPLICATION_CONTEXT_DIR
   value: birthday-paradox
