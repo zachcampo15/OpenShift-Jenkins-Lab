@@ -158,17 +158,17 @@ On your GitHub repo, go to Settings->WebHooks->Add webhook. Use the table below 
 
 | Field | Value |
 | ----- | ----- |
-| Payload URL | Copy-paste the URL from `oc describe is birthday-paradox-pipeline` output. Replace the `<secret>` string with the value of the `WebHookSecretKey` you defined in the `webhook-secret` above. |
+| Payload URL | Copy-paste the URL from `oc describe bc birthday-paradox-pipeline` output. Replace the `<secret>` string with the value of the `WebHookSecretKey` you defined in the `webhook-secret` above. |
 | Content type | application/json |
 | SSL Verification | Disable (although this is not recommended, GitHub will not be able to recognize the OpenTLC SSL certificate if you are using an OpenTLC cluster for this lab) |
 
 ### 4) Test the Webhook
 Everything at this point should be configured to allow a developer to push a commit to the repo and automatically trigger a Jenkins pipeline build. Let's test the webhook to make sure this is the case.
 
-Amend and force-push a commit to trigger the build:
+Push a new commit to trigger the build:
 ```bash
-git commit --amend --no-edit
-git push origin master --force
+git commit -m "test"
+git push origin master
 ```
 
 You should see a build trigger in Jenkins after a brief delay.
