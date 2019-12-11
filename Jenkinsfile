@@ -53,6 +53,7 @@ pipeline {
         stage("Create Image") {
             steps {
                 script {
+			openshift.withCluster(){
                     openshift.withProject(devProject) {
                         dir("openshift") {
                             /* TODO: Process and Apply the build.yaml OpenShift template. 
@@ -67,6 +68,7 @@ pipeline {
                             openshift.selector("bc", appName).startBuild("--from-file=${appName}-${imageTag}.jar").logs("-f")
                         }
                     }
+			}
                 }
             }
         }
